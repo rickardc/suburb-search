@@ -5,6 +5,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    <!-- bootstarp -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
     <script src="index.js"></script>
 </head>
 <body>
@@ -111,13 +114,14 @@
         </table>
     </div>
 
-    <?php 
+    <?php
+        // get the google maps api key from the .env file
         $env = parse_ini_file('.env');
         $google_maps_api = $env["GOOGLE_MAPS_API"];
 
+        // add the google maps api script
         echo "<script src='https://maps.googleapis.com/maps/api/js?key=".$google_maps_api."&callback=initMap&v=beta&region=AU&libraries=places' async defer>";
         echo "</script>";
-
 
     ?>
 
