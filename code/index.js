@@ -7,9 +7,9 @@ let suburbCurrent;
 let placeIDs
 let exportButton;
 
-var selected_placeid = new Array();
-var distance_store = new Array();
-var markers = new Array();
+let selected_placeid = new Array();
+let distance_store = new Array();
+let markers = new Array();
 
 // load placeIDs.json
 // source https://gist.github.com/randomecho/5020859
@@ -20,8 +20,8 @@ fetch("placeIDs.json")
   }
 );
 
-var lat = -37.840935;
-var lng = 144.946457;
+let lat = -37.840935;
+let lng = 144.946457;
 
 async function initMap() {
   
@@ -37,7 +37,7 @@ async function initMap() {
   const {spherical} = await google.maps.importLibrary("geometry")
 
   // Autocomplete for suburb input.
-  var suburbInput = document.getElementById("suburb");
+  let suburbInput = document.getElementById("suburb");
   const options = {
     componentRestrictions: { country: "au" },
     fields: ["place_id", "geometry", "name"],
@@ -48,7 +48,7 @@ async function initMap() {
   autocomplete.bindTo("bounds", map);
 
   // Autocomplete for origin input.
-  var originInput = document.getElementById("origin");
+  let originInput = document.getElementById("origin");
   const options_origin = {
     componentRestrictions: { country: "au" },
     fields: ["place_id", "geometry", "name"],
@@ -83,15 +83,15 @@ async function initMap() {
     
     // Get suburb from input.
     suburbInput = document.getElementById("suburb");
-    var suburb = suburbInput.value;
+    let suburb = suburbInput.value;
     console.log(suburb);
 
-    var suburb_arr = suburb.split(" ");
-    var postal_code = Number(suburb_arr[suburb_arr.length - 1]);
+    let suburb_arr = suburb.split(" ");
+    let postal_code = Number(suburb_arr[suburb_arr.length - 1]);
     console.log("postal_code: ", postal_code);
     
     // Get the place details from suburb.
-    var place_add = null;
+    let place_add = null;
     // Get the place detail from placeIDs.json
     if( placeIDs.some(item => item.name + ' ' + item.state === suburb )){
       place_add = placeIDs.filter(item => item.name + ' ' + item.state === suburb )[0];
@@ -123,13 +123,13 @@ async function initMap() {
   const radiusInput = document.getElementById("radius");
   
   radiusInput.addEventListener("change", () => {
-    var radius_km = radiusInput.value * 100;
+    let radius_km = radiusInput.value * 100;
     
     // clear previous circle
     if(typeof circle !== "undefined"){
     circle.setMap(null);
     }
-    var results_center = {lat: suburbCurrent.lat, lng: suburbCurrent.lng};
+    let results_center = {lat: suburbCurrent.lat, lng: suburbCurrent.lng};
 
     // add new circle
     circle = new google.maps.Circle({
@@ -144,10 +144,10 @@ async function initMap() {
     });
 
     // for each postcode, check if it is within the circle
-    var places_inrange = new Array();
-    for (var i = 0; i < placeIDs.length; i++) {
-      var place = placeIDs[i];
-      var place_location = new google.maps.LatLng(place.lat, place.lng);
+    let places_inrange = new Array();
+    for (let i = 0; i < placeIDs.length; i++) {
+      let place = placeIDs[i];
+      let place_location = new google.maps.LatLng(place.lat, place.lng);
       if (google.maps.geometry.spherical.computeDistanceBetween(results_center, place_location) <= radius_km*1) {
         places_inrange.push(place);
         if ( selected_placeid.some(item => item.placeID === place.placeID) ) {
@@ -192,7 +192,7 @@ function handlePlaceClick(event) {
 
   //const place = await feature.fetchPlace();
 
-  var clicked_placeid = feature.placeId;
+  let clicked_placeid = feature.placeId;
 
   // if placeid is already in json, remove it
   if ( selected_placeid.some(item => item.placeID === clicked_placeid) ) {
@@ -202,7 +202,7 @@ function handlePlaceClick(event) {
     updateResultsTable(selected_placeid);
     suburbCurrent = null;
   } else {
-    var place_add = null;
+    let place_add = null;
     // Get the place detail from placeIDs.json
     if( placeIDs.some(item => item.placeID === clicked_placeid )){
       place_add = placeIDs.filter(item => item.placeID === clicked_placeid)[0];
@@ -255,7 +255,7 @@ function applyStyleToMultipleSelected(placeids) {
   // Apply styles to the feature layer.
   featureLayer.style = (options) => {
 
-    for( var i = 0; i < placeids.length; i++){ 
+    for( let i = 0; i < placeids.length; i++){ 
       if ( placeids[i].placeID === options.feature.placeId) { 
         return styleClicked;
       }
@@ -298,7 +298,7 @@ function clearAll() {
   suburbCurrent = null;
 
   // clear markers
-  for (var i = 0; i < markers.length; i++) {
+  for (let i = 0; i < markers.length; i++) {
     markers[i].setMap(null);
   }
 
@@ -308,10 +308,10 @@ function clearAll() {
   }
   
   // clear search inputs
-  var originInput = document.getElementById("origin");
+  let originInput = document.getElementById("origin");
   originInput.value = "";
 
-  var suburbInput = document.getElementById("suburb");
+  let suburbInput = document.getElementById("suburb");
   suburbInput.value = "";
 
   // reload suburb data removing distance and travel time data
@@ -327,10 +327,10 @@ function clearAll() {
 }
 
 function updateResultsTable(selected_placeid) {
-  var table = document.getElementById("results_table");
+  let table = document.getElementById("results_table");
   table.innerHTML = "";
 
-  var originInput = document.getElementById("origin");
+  let originInput = document.getElementById("origin");
   if (originInput.value) {   
     calculateDistance(originInput.value, selected_placeid);
     addMarker(originInput.value);
@@ -343,7 +343,7 @@ function updateResultsTable(selected_placeid) {
 function buildResultsTable(selected_placeid) {
 
   // clear table
-  var table = document.getElementById("results_table");
+  let table = document.getElementById("results_table");
   table.innerHTML = ``; 
 
   if(selected_placeid){
@@ -352,14 +352,14 @@ function buildResultsTable(selected_placeid) {
       return parseFloat(a.travelTimeValue) - parseFloat(b.travelTimeValue);
     });
 
-    for (var i = 0; i < selected_placeid.length; i++) {
-      var place = selected_placeid[i];
-      var row = table.insertRow(i);
+    for (let i = 0; i < selected_placeid.length; i++) {
+      let place = selected_placeid[i];
+      let row = table.insertRow(i);
       
-      var cell1 = row.insertCell(0);
+      let cell1 = row.insertCell(0);
       cell1.innerHTML = place.name;
       
-      var cell2 = row.insertCell(1);
+      let cell2 = row.insertCell(1);
       const num_pc = place.postcode.length;
       if(num_pc > 1){
         min = Math.min(place.postcode.length, 4);
@@ -367,10 +367,10 @@ function buildResultsTable(selected_placeid) {
       } else {
         cell2.innerHTML = place.postcode[0];
       }
-      var cell3 = row.insertCell(2);
+      let cell3 = row.insertCell(2);
       cell3.innerHTML = place.distance;
       
-      var cell4 = row.insertCell(3);
+      let cell4 = row.insertCell(3);
       cell4.innerHTML = place.travelTime;
     }
   }
@@ -380,13 +380,13 @@ function buildResultsTable(selected_placeid) {
 function calculateDistance(origin, selected_placeid) {
   // Array of selected_placeid.name
   console.log("placeids: ", selected_placeid);
-  var destination = [];
-  for (var i = 0; i < selected_placeid.length; i++) {
+  let destination = [];
+  for (let i = 0; i < selected_placeid.length; i++) {
     destination.push(selected_placeid[i].name + ", " + selected_placeid[i].state);
   }
   console.log("destination", destination);
 
-  var service = new google.maps.DistanceMatrixService();
+  let service = new google.maps.DistanceMatrixService();
   service.getDistanceMatrix(
     { origins: [origin],
       destinations: destination,
@@ -398,20 +398,20 @@ function calculateDistance(origin, selected_placeid) {
         alert("Error was: " + status);
       } else {
         distance_store = Array();
-        var origins = response.originAddresses;
-        var destinations = response.destinationAddresses;
+        let origins = response.originAddresses;
+        let destinations = response.destinationAddresses;
 
-        for (var i = 0; i < origins.length; i++) {
-          var results = response.rows[i].elements;
-          for (var j = 0; j < results.length; j++) {
-            var element = results[j];
+        for (let i = 0; i < origins.length; i++) {
+          let results = response.rows[i].elements;
+          for (let j = 0; j < results.length; j++) {
+            let element = results[j];
             console.log("element", element);
             console.log("element.distance", element.distance);
-            var distance = element.distance.text;
-            var duration = element.duration.text;
-            var duration_value = element.duration.value;
-            var from = origins[i];
-            var to = destinations[j];
+            let distance = element.distance.text;
+            let duration = element.duration.text;
+            let duration_value = element.duration.value;
+            let from = origins[i];
+            let to = destinations[j];
             
             selected_placeid[j].distance = distance;
             selected_placeid[j].travelTime = duration;
@@ -432,15 +432,15 @@ function addMarker(origin_address) {
   console.log("markers: ", markers);
 
   // clear markers
-  for (var i = 0; i < markers.length; i++) {
+  for (let i = 0; i < markers.length; i++) {
     markers[i].setMap(null);
   }
 
   // geo code origin address
-  var geocoder = new google.maps.Geocoder();
+  let geocoder = new google.maps.Geocoder();
   geocoder.geocode({ address: origin_address }, function (results, status) {
     if (status == google.maps.GeocoderStatus.OK) {
-      var origin = results[0].geometry.location;
+      let origin = results[0].geometry.location;
       console.log("origin", origin);
       marker = new google.maps.Marker({
         position: origin,
@@ -457,14 +457,14 @@ function addMarker(origin_address) {
   
 function export_csv() {
   console.log("exporting to csv");
-  var csv = "Name, Postcode, Distance, Travel Time\n";
+  let csv = "Name, Postcode, Distance, Travel Time\n";
   selected_placeid.forEach(function(row) {
     csv += row.name + "," + row.postcode + "," + row.distance + "," + row.travelTime + "\n";
   });
   
   console.log(csv);
   
-  var hiddenElement = document.createElement('a');
+  let hiddenElement = document.createElement('a');
   hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);
   hiddenElement.target = '_blank';
   hiddenElement.download = 'suburb_finder_results.csv';
@@ -473,8 +473,8 @@ function export_csv() {
 
 // repostion map to include all markers
 function repositionMap() {
-  var bounds = new google.maps.LatLngBounds();
-  for (var i = 0; i < markers.length; i++) {
+  let bounds = new google.maps.LatLngBounds();
+  for (let i = 0; i < markers.length; i++) {
     bounds.extend(markers[i].getPosition());
   }
   map.fitBounds(bounds);
